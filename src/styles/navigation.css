@@ -1,0 +1,78 @@
+/* ==========================================================
+   GBSE Navigation
+========================================================== */
+
+.site-header {
+
+    position: absolute;
+
+    top: 0;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: min(1500px, calc(100% - 80px));
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 2.5rem 0;
+
+    z-index: 100;
+
+}
+
+/* ---------- Logo ---------- */
+
+.brand {
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 3rem;
+
+    font-weight: 700;
+
+    color: var(--color-brass);
+
+    letter-spacing: .08em;
+
+}
+
+/* ---------- Navigation ---------- */
+
+.main-nav {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 3.5rem;
+
+    margin-right: 140px;
+
+}
+
+.main-nav a {
+
+    text-decoration: none;
+
+    text-transform: uppercase;
+
+    letter-spacing: .18em;
+
+    font-size: .9rem;
+
+    color: var(--color-text);
+
+    transition: color .3s ease;
+
+}
+
+.main-nav a:hover {
+
+    color: var(--color-brass);
+
+}

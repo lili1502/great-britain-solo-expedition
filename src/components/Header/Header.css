@@ -1,0 +1,73 @@
+/* ==========================================
+   HEADER
+========================================== */
+
+.site-header {
+
+    position: relative;
+
+    z-index: 100;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    height: 110px;
+
+    padding: 0 60px;
+
+}
+
+/* ==========================================
+   LOGO
+========================================== */
+
+.brand {
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 3rem;
+
+    font-weight: 700;
+
+    color: var(--color-brass);
+
+    letter-spacing: .08em;
+
+}
+
+/* ==========================================
+   NAVIGATION
+========================================== */
+
+.main-nav {
+
+    display: flex;
+
+    gap: 3rem;
+
+    margin-right: 180px;
+
+}
+
+.main-nav a {
+
+    color: white;
+
+    text-decoration: none;
+
+    text-transform: uppercase;
+
+    letter-spacing: .16em;
+
+    font-size: .9rem;
+
+    transition: color .25s ease;
+
+}
+
+.main-nav a:hover {
+
+    color: var(--color-brass);
+
+}

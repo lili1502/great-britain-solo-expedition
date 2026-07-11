@@ -1,0 +1,105 @@
+.route-map {
+
+    position: relative;
+
+    width: 340px;
+
+    background: #0b0b0b;
+
+    border-left: 1px solid rgba(255,255,255,.08);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    overflow: visible;
+
+    z-index: 20;
+
+}
+
+/* ----------------------- */
+/* Small map */
+/* ----------------------- */
+
+.map-preview {
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 30px;
+
+}
+
+.map-image {
+
+    width: 96%;
+
+    opacity: .22;
+
+    filter: brightness(.75);
+
+}
+
+/* ----------------------- */
+/* Expanded overlay */
+/* ----------------------- */
+
+.map-expanded {
+
+    position: absolute;
+
+    top: 0;
+
+    right: 100%;
+
+    width: 500px;
+
+    height: 100%;
+
+    background: rgba(8,8,8,.98);
+
+    border-left: 1px solid rgba(255,255,255,.05);
+
+    border-right: 1px solid rgba(255,255,255,.08);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transform: translateX(25px);
+
+    transition:
+        opacity .35s ease,
+        transform .35s ease;
+
+}
+
+.route-map:hover .map-expanded {
+
+    opacity: 1;
+
+    transform: translateX(0);
+
+}
+
+.map-image-large {
+
+    width: 92%;
+
+    opacity: .90;
+
+}

@@ -1,0 +1,150 @@
+/* ==========================================================
+   RESET
+========================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    background: #111;
+}
+
+/* ==========================================================
+   PAGE
+========================================================== */
+
+.app {
+
+    width: 100%;
+
+    min-height: 100vh;
+
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.site-header {
+
+    height: 80px;
+
+    padding: 0 60px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+/* ==========================================================
+   MAIN
+========================================================== */
+
+.page-layout {
+
+    display: grid;
+
+    grid-template-columns: 1fr 320px;
+
+    min-height: calc(100vh - 80px);
+
+}
+
+/* ==========================================================
+   LEFT SIDE
+========================================================== */
+
+.content-column {
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    padding: 30px 60px 40px;
+
+}
+
+/* ==========================================================
+   TITLE
+========================================================== */
+
+.title-block {
+
+    flex: 1;
+
+    display: flex;
+
+    align-items: flex-start;
+
+}
+
+/* ==========================================================
+   DESTINATIONS
+========================================================== */
+
+.destinations {
+
+    height: 260px;
+
+    display: grid;
+
+    grid-template-columns: repeat(5,1fr);
+
+}
+
+/* ==========================================================
+   DESTINATION
+========================================================== */
+
+.destination {
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    padding: 0 18px;
+
+    border-right: 1px solid rgba(255,255,255,.15);
+
+}
+
+.destination:last-child {
+
+    border-right: none;
+
+}
+
+/* ==========================================================
+   MAP
+========================================================== */
+
+.map-column {
+
+    border-left: 1px solid rgba(255,255,255,.15);
+
+    display: flex;
+
+}
+
+.route-map {
+
+    flex: 1;
+
+}

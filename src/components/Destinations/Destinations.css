@@ -1,0 +1,94 @@
+.destinations {
+
+    display: grid;
+
+    grid-template-columns: repeat(5,1fr);
+
+    gap: 8px;
+
+    padding: 0 12px;
+
+    height: 180px;
+
+    margin-top: -28px;
+
+    position: relative;
+
+    z-index: 20;
+
+}
+
+.destination-panel {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 24px;
+
+    background: rgba(18,18,18,.55);
+    backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    border-radius: 18px 18px 0 0;
+
+    cursor: pointer;
+
+    transition:
+        transform .35s ease,
+        background .35s ease,
+        border-color .35s ease,
+        box-shadow .35s ease;
+
+}
+
+.destination-panel:hover {
+
+    background: rgba(34,34,34,.82);
+
+    border-color: rgba(198,156,78,.45);
+
+    box-shadow:
+        0 0 20px rgba(198,156,78,.08),
+        0 12px 30px rgba(0,0,0,.30);
+
+}
+
+.destination-name {
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 1.45rem;
+
+    font-weight: 500;
+
+    color: rgba(255,255,255,.90);
+
+    white-space: nowrap;
+
+}
+
+.destination-action {
+
+    font-size: .72rem;
+
+    letter-spacing: .20em;
+
+    text-transform: uppercase;
+
+    color: rgba(255,255,255,.35);
+
+    transition:
+        color .30s ease,
+        transform .30s ease;
+
+}
+
+.destination-panel:hover .destination-action {
+
+    color: var(--color-brass);
+
+    transform: translateX(8px);
+
+}

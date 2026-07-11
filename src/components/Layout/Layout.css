@@ -1,0 +1,32 @@
+.layout {
+
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+}
+
+.homepage {
+
+    flex: 1;
+
+    display: grid;
+
+    grid-template-columns: 1fr 340px;
+
+    height: calc(100vh - 110px);
+
+}
+
+.content-column {
+
+    display: grid;
+
+    grid-template-rows: minmax(0,1fr) 180px;
+
+    overflow: visible;
+
+    position: relative;
+
+}

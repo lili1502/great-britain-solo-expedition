@@ -1,0 +1,47 @@
+/* ==========================================================
+   GBSE Design System
+   Color Palette
+   ========================================================== */
+
+:root {
+
+    /* Backgrounds */
+    --color-background: #111315;
+    --color-surface: rgba(20, 23, 26, 0.72);
+
+    /* Typography */
+    --color-text: #F5F1E8;
+    --color-text-muted: #C8C2B8;
+
+    /* Brass */
+    --color-brass: #CDA35B;
+    --color-brass-light: #E5C17C;
+    --color-brass-dark: #8C6A34;
+
+    /* Landscape */
+    --color-stone: #6E706C;
+    --color-mist: #AEB5B5;
+
+    /* Borders */
+    --color-border: rgba(255,255,255,.08);
+
+    /* Shadows */
+    --shadow-soft: 0 8px 30px rgba(0,0,0,.25);
+
+    /* Layout */
+
+    --header-height: 88px;
+
+    --content-width: 1400px;
+
+    --map-width: 340px;
+
+    /* Animation */
+
+    --transition-fast: .2s ease;
+
+    --transition-normal: .35s ease;
+
+    --transition-slow: .6s ease;
+
+}

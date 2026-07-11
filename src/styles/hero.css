@@ -1,0 +1,62 @@
+/* ==========================================================
+   SEGB
+   Hero
+   ========================================================== */
+
+.hero {
+
+    position: relative;
+
+    min-height: 100vh;
+
+    display: flex;
+
+align-items: flex-start;
+
+padding-top: 8vh;
+
+    background-image: url("../assets/images/hero.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    overflow: hidden;
+}
+
+.hero::before {
+
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+  background:
+    linear-gradient(
+        90deg,
+        rgba(10,10,10,.45) 0%,
+        rgba(10,10,10,.18) 28%,
+        rgba(10,10,10,0) 55%
+    );
+
+    z-index: 1;
+}
+
+.hero-overlay {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: flex-start;
+}
+
+.hero-content {
+
+    width: min(700px, 90%);
+
+    margin-left: 8vw;
+}
