@@ -23,10 +23,10 @@
 
     display: grid;
 
-    grid-template-rows: minmax(0,1fr) 180px;
-
-    overflow: visible;
+   grid-template-rows: 500px 210px;
 
     position: relative;
+
+    overflow: visible;
 
 }

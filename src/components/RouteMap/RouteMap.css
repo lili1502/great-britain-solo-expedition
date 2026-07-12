@@ -1,64 +1,188 @@
 .route-map {
-    position: relative;
+
     width: 340px;
+    height: 100%;
+
     background: #0b0b0b;
+
     border-left: 1px solid rgba(255,255,255,.08);
 
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
 
     overflow: hidden;
-    z-index: 20;
+
 }
 
-/* ---------------------------------- */
-/* Permanent Route Panel              */
-/* ---------------------------------- */
+/* ----------------------------------
+   Space Above Map
+---------------------------------- */
 
-.route-map-panel {
+.route-map-top {
 
-    width: 100%;
-    height: 100%;
+    height: 100px;
+
+    flex-shrink: 0;
+
+}
+
+/* ----------------------------------
+   Map
+---------------------------------- */
+
+.route-map-map {
+
+    flex: 1;
 
     display: flex;
-    justify-content: center;
-    align-items: stretch;
 
-    padding: 10px 14px;
+    justify-content: flex-start;
 
-    background:
-        linear-gradient(
-            to left,
-            rgba(255,255,255,.015),
-            rgba(255,255,255,0)
-        );
+    align-items: flex-start;
+
+    padding-left: 8px;
+
 }
 
-/* ---------------------------------- */
-/* Map                                */
-/* ---------------------------------- */
+/*
+   Optical alignment.
+   The map is intentionally raised to align visually
+   with the hero image.
+
+   This is an artistic adjustment,
+   not a layout bug.
+*/
 
 .route-map-image {
 
-    width: auto;
+    width: 88%;
 
-    height: 88%;
+    height: auto;
 
-    max-width: 100%;
-
-    object-fit: contain;
-
-    align-self: center;
+    margin-top: -100px;
 
     opacity: .82;
-
-    transition:
-        opacity .7s ease,
-        filter .7s ease;
 
     filter:
         brightness(.82)
         contrast(.96)
         saturate(.92);
+
+    transition:
+        opacity .7s ease,
+        filter .7s ease;
+
+}
+
+/* ==========================================
+   Lower Panel
+========================================== */
+
+.route-map-bottom {
+
+    flex: 0 0 165px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 0;
+
+}
+
+/* ==========================================
+   Departure Counter
+========================================== */
+
+.departure-counter {
+
+    width: 230px;
+
+    text-align: center;
+
+    margin: 0;
+
+}
+
+/* Title */
+
+.departure-title {
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 1.2rem;
+
+    font-weight: 600;
+
+    color: var(--color-brass);
+
+}
+
+/* Divider */
+
+.departure-divider {
+
+    width: 140px;
+
+    height: 1px;
+
+    margin: 14px auto 24px;
+
+    background: rgba(198,156,78,.45);
+
+}
+
+/* Countdown */
+
+.departure-count {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: baseline;
+
+    gap: 8px;
+
+}
+
+.departure-number {
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 3.8rem;
+
+    line-height: 1;
+
+    color: #f3e4bf;
+
+    text-shadow:
+        0 0 12px rgba(198,156,78,.10);
+
+}
+
+.departure-days {
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 1.15rem;
+
+    color: #ccb48a;
+
+}
+
+/* Date */
+
+.departure-date {
+
+    margin-top: 18px;
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 1rem;
+
+    color: rgba(255,255,255,.55);
+
 }
