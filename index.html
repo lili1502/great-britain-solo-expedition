@@ -1,16 +1,457 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Great Britain Solo Expedition</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11110f">
+  <title>GBSE — Great Britain Solo Expedition</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #11110f;
+      --coal: #191a18;
+      --coal-soft: #222320;
+      --ivory: #eee8db;
+      --muted: #b8b2a6;
+      --brass: #b99a61;
+      --brass-bright: #d0b278;
+      --line: rgba(220, 207, 177, .22);
+      --serif: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+      --sans: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+      font-family: var(--sans);
+      background: var(--ink);
+      color: var(--ivory);
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--ink); }
+    body { min-height: 100vh; }
+    button, a { color: inherit; font: inherit; }
+    a { text-decoration: none; }
+    button { cursor: pointer; }
+    :focus-visible { outline: 2px solid var(--brass-bright); outline-offset: 4px; }
+    .skip-link { position: fixed; z-index: 20; top: 8px; left: 8px; transform: translateY(-160%); background: var(--ivory); color: var(--ink); padding: 10px 14px; }
+    .skip-link:focus { transform: none; }
+    .site-header {
+      height: 110px; padding: 0 clamp(24px, 2.15vw, 44px); display: flex; align-items: center; gap: clamp(30px, 5.3vw, 92px);
+      border-bottom: 1px solid rgba(255,255,255,.07); position: relative; z-index: 3; background: #11110f;
+    }
+    .brand { color: var(--brass-bright); font: 600 46px/.9 var(--serif); letter-spacing: .055em; flex: 0 0 auto; }
+    .brand small { display: none; }
+    .primary-nav { display: flex; align-items: center; gap: clamp(18px, 2.8vw, 46px); flex-wrap: wrap; margin-left: auto; }
+    .primary-nav button { border: 0; padding: 8px 0; background: transparent; color: #ded8cc; font-size: 10px; letter-spacing: .19em; text-transform: uppercase; transition: color .2s ease; }
+    .primary-nav button:hover, .primary-nav button[aria-current="page"] { color: var(--brass-bright); }
+    .header-note { display: none; }
+    main { min-height: calc(100vh - 110px); }
+    #view-expedition { height: calc(100vh - 110px); min-height: 0; padding: 0; overflow: hidden; }
+    .home-layout { height: 100%; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) clamp(280px, 16.6vw, 340px); }
+    .main-column { height: 100%; min-width: 0; display: grid; grid-template-rows: minmax(360px, 66%) minmax(170px, 28%); align-content: space-between; }
+    .hero {
+      min-height: 0; height: 100%; position: relative; overflow: hidden; isolation: isolate; background: #22231f;
+    }
+    .hero-photo { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: center 58%; }
+    .hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(9,11,10,.24), transparent 82%), linear-gradient(0deg, rgba(8,10,9,.35), transparent 52%, rgba(12,12,11,.08)); }
+    .hero-copy { position: absolute; left: clamp(28px, 1.9vw, 42px); top: clamp(62px, 10vh, 98px); max-width: 920px; text-shadow: 0 3px 18px rgba(0,0,0,.72); }
+    .eyebrow { color: var(--brass-bright); font-size: 9px; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; }
+    .hero h1 { max-width: 920px; margin: 0; color: #f0eadf; font: 500 clamp(42px, 3.2vw, 64px)/1.05 var(--serif); letter-spacing: -.026em; white-space: nowrap; }
+    .hero-subtitle { max-width: 430px; margin: 0; color: rgba(245,239,226,.84); font: italic 19px/1.5 var(--serif); }
+    .hero-coordinates { margin-top: 30px; display: flex; align-items: center; gap: 12px; color: rgba(238,232,219,.74); font-size: 9px; letter-spacing: .2em; text-transform: uppercase; }
+    .hero-coordinates::before { content: ""; width: 34px; height: 1px; background: var(--brass); }
+    .image-placeholder { position: absolute; top: 18px; right: 18px; max-width: 230px; padding: 8px 10px; border: 1px solid rgba(238,232,219,.24); border-radius: 2px; color: rgba(245,239,226,.74); background: rgba(15,16,14,.36); backdrop-filter: blur(8px); font-size: 8px; letter-spacing: .13em; text-align: right; text-transform: uppercase; }
+    .destination-strip { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: stretch; height: 100%; }
+    .destination-tab { min-width: 0; min-height: 0; height: 100%; padding: 25px 22px 22px; display: flex; flex-direction: column; align-items: flex-start; text-align: left; border: 1px solid #242424; border-right: 0; border-radius: 15px 15px 0 0; background: #111; color: var(--ivory); transition: background .22s ease, border-color .22s ease, transform .22s ease, box-shadow .22s ease; }
+    .destination-tab:last-child { border-right: 1px solid #242424; }
+    .destination-tab:hover, .destination-tab:focus-visible, .destination-tab.is-hovered { position: relative; z-index: 2; transform: translateY(-6px); background: #202020; border-color: #9f814a; box-shadow: inset 0 0 0 1px rgba(208,178,120,.12), 0 0 22px rgba(185,154,97,.08); }
+    .destination-tab .tab-index { display: none; }
+    .destination-tab strong { display: block; font: 500 clamp(18px, 1.25vw, 23px)/1.1 var(--serif); }
+    .destination-preview { display: block; width: 100%; height: clamp(44px, 7vh, 58px); flex: 0 0 auto; margin-top: 12px; overflow: hidden; position: relative; border: 1px solid rgba(220,207,177,.09); background: #151512; }
+    .destination-preview img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; filter: saturate(.94) contrast(1.12) brightness(.79); opacity: .88; transition: filter .22s ease, opacity .22s ease; }
+    .destination-preview::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(12,13,12,.04), rgba(12,13,12,.12) 55%, rgba(17,17,15,.76)); }
+    .destination-tab:hover .destination-preview img, .destination-tab:focus-visible .destination-preview img, .destination-tab.is-hovered .destination-preview img { filter: saturate(.96) contrast(1.1) brightness(.86); opacity: .96; }
+    .destination-tab small { display: block; margin-top: auto; color: #666; font-size: 9px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; }
+    .destination-tab:hover small, .destination-tab:focus-visible small, .destination-tab.is-hovered small { color: var(--brass-bright); }
+    .map-panel { height: 100%; min-height: 0; padding: 0 9px; display: flex; flex-direction: column; position: relative; overflow: hidden; background: #090909; border-left: 1px solid #202020; }
+    .map-heading { display: none; }
+    .map-art-wrap { flex: 0 0 auto; min-height: 0; margin: 0; position: relative; display: block; }
+    .map-art { display: block; width: 100%; height: auto; aspect-ratio: 2 / 3; object-fit: cover; opacity: 1; }
+    .map-markers { position: absolute; inset: 0; }
+    .map-marker { position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 5px; border: 0; padding: 3px; color: #f1e4c1; background: transparent; text-shadow: 0 1px 5px #000; transition: transform .2s ease, filter .2s ease; }
+    .map-marker-dot { width: 8px; height: 8px; flex: 0 0 8px; border: 1px solid #f0d08a; border-radius: 50%; background: #66512c; box-shadow: 0 0 0 3px rgba(185,154,97,.2), 0 0 10px rgba(226,190,113,.6); transition: background .2s ease, box-shadow .2s ease, border-color .2s ease, transform .2s ease; }
+    .map-marker-label { padding: 2px 4px; color: #efe2c1; background: rgba(7,14,16,.64); font: 8px/1.2 var(--serif); white-space: nowrap; transition: color .2s ease, background .2s ease, text-shadow .2s ease; }
+    .map-marker:hover, .map-marker:focus-visible, .map-marker.is-hovered { z-index: 2; transform: translate(-50%, -50%) scale(1.1); filter: brightness(1.18); }
+    .map-marker:hover .map-marker-dot, .map-marker:focus-visible .map-marker-dot, .map-marker.is-hovered .map-marker-dot, .map-marker.is-selected .map-marker-dot { border-color: #fff0bd; background: #f1cf7c; box-shadow: 0 0 0 5px rgba(208,178,120,.34), 0 0 13px 4px rgba(226,190,113,.5), 0 0 24px 8px rgba(226,190,113,.55); transform: scale(1.12); }
+    .map-marker:hover .map-marker-label, .map-marker:focus-visible .map-marker-label, .map-marker.is-hovered .map-marker-label, .map-marker.is-selected .map-marker-label { color: #fff0bd; background: rgba(20,20,16,.9); text-shadow: 0 0 9px rgba(255,218,139,.7); }
+    .map-placeholder, .map-caption { display: none; }
+    .departure { margin-top: auto; min-height: 30%; padding: 20px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 0; text-align: center; }
+    .departure-label { color: #d3a84e; font: 500 16px/1.2 var(--serif); }
+    .departure-rule { width: 140px; height: 1px; margin: 15px 0 25px; background: rgba(185,154,97,.55); }
+    .departure-date { order: 3; display: block; margin: 22px 0 4px; color: #96a9b9; font: 12px/1.2 var(--serif); }
+    .days-remaining { color: #eee0b6; font: 500 clamp(42px, 3.3vw, 58px)/.95 var(--serif); white-space: nowrap; }
+    .days-remaining small { display: inline; margin: 0 0 0 5px; color: #d4a75e; font: 14px/1 var(--serif); letter-spacing: 0; text-transform: none; }
+    .view { display: none; min-height: calc(100vh - 110px); padding: clamp(34px, 6vw, 80px); background: radial-gradient(ellipse at 80% 12%, rgba(185,154,97,.08), transparent 28%), var(--ink); }
+    .view.is-active { display: block; }
+    .view-inner { width: min(1120px, 100%); margin: 0 auto; }
+    .view-kicker { color: var(--brass); font-size: 9px; letter-spacing: .28em; text-transform: uppercase; }
+    .view h2 { margin: 14px 0 18px; font: 500 clamp(42px, 6vw, 74px)/.95 var(--serif); }
+    .view-lede { max-width: 680px; color: #c8c0b2; font: 20px/1.55 var(--serif); }
+    .section-rule { width: 72px; height: 1px; margin: 28px 0; background: var(--brass); }
+    .route-overview { margin: 25px 0 30px; padding: 20px 22px; border: 1px solid var(--line); background: linear-gradient(120deg, rgba(185,154,97,.09), rgba(255,255,255,.015)); }
+    .route-overview-label { display: block; color: var(--brass); font-size: 8px; letter-spacing: .22em; text-transform: uppercase; }
+    .route-overview strong { display: block; margin-top: 8px; font: 500 25px/1.2 var(--serif); }
+    .route-sequence { margin-top: 12px; color: #ded7c9; font: 16px/1.6 var(--serif); }
+    .route-sequence span { color: var(--brass-bright); }
+    .route-interlude { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--line); color: #aaa498; font-size: 12px; }
+    .route-interlude button { border: 0; border-bottom: 1px solid var(--brass); padding: 0 0 3px; background: transparent; color: var(--brass-bright); font: 500 17px var(--serif); }
+    .itinerary-window { color: var(--brass-bright); font: italic 18px/1.4 var(--serif); }
+    .itinerary-summary { max-width: 780px; color: #bbb4a8; font: 16px/1.6 var(--serif); }
+    .destination-image { margin: 20px 0 24px; overflow: hidden; border: 1px solid var(--line); background: #0b0c0b; }
+    .destination-photo { position: relative; isolation: isolate; overflow: hidden; aspect-ratio: 16 / 7; background: #131310; }
+    .destination-photo::before { content: ""; position: absolute; z-index: 0; inset: -22px; background: var(--destination-photo) center / cover no-repeat; filter: blur(16px) brightness(.40) saturate(.78); transform: scale(1.04); }
+    .destination-photo::after { content: ""; position: absolute; z-index: 2; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(15,16,15,.10), transparent 34%, rgba(19,14,10,.10)), linear-gradient(115deg, rgba(177,133,69,.035), transparent 56%); }
+    .destination-photo img { position: absolute; z-index: 1; top: 50%; left: 50%; display: block; width: var(--photo-width, 100%); max-width: none; height: auto; transform: translate(-50%, -50%); filter: saturate(.94) contrast(1.12) brightness(.91); }
+    .destination-image figcaption { padding: 10px 13px; border-top: 1px solid var(--line); color: #a9a294; font-size: 10px; line-height: 1.5; }
+    .destination-image a { color: var(--brass-bright); text-decoration: underline; text-decoration-color: rgba(208,178,120,.45); text-underline-offset: 2px; }
+    .itinerary-heading { margin: 32px 0 10px; color: var(--brass-bright); font: 500 26px var(--serif); }
+    .itinerary-timeline { margin: 18px 0 30px; padding: 0; list-style: none; border-bottom: 1px solid var(--line); }
+    .itinerary-timeline li { display: grid; grid-template-columns: minmax(100px, 150px) 1fr; gap: 12px 22px; padding: 16px 0; border-top: 1px solid var(--line); }
+    .itinerary-timeline time { padding-top: 2px; color: var(--brass); font-size: 9px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+    .itinerary-timeline h3 { margin: 0; color: var(--ivory); font: 500 22px/1.2 var(--serif); }
+    .itinerary-timeline p { margin: 5px 0 0; color: #aaa498; font-size: 13px; line-height: 1.55; }
+    .itinerary-activities { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 30px; padding: 0; list-style: none; }
+    .itinerary-activities li { padding: 8px 11px; border: 1px solid rgba(220,207,177,.16); color: #d4cbbb; background: rgba(255,255,255,.025); font: 15px/1.2 var(--serif); }
+    .schedule-note { margin: 20px 0; padding: 13px 16px; border-left: 2px solid var(--brass); color: #b8b0a0; background: rgba(185,154,97,.06); font-size: 12px; line-height: 1.55; }
+    .dossier-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 38px; }
+    .dossier-block { min-height: 148px; padding: 20px; border: 1px solid var(--line); background: linear-gradient(145deg, rgba(255,255,255,.045), rgba(255,255,255,.012)); }
+    .dossier-block h3 { margin: 0 0 12px; color: var(--brass-bright); font: 500 23px var(--serif); }
+    .dossier-block p { margin: 0; color: #a9a397; font: 13px/1.6 var(--sans); }
+    .destination-picker, .text-link { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 24px; }
+    .destination-picker button, .text-link button { border: 1px solid var(--line); padding: 10px 13px; color: var(--ivory); background: transparent; letter-spacing: .12em; text-transform: uppercase; font-size: 9px; }
+    .destination-picker button:hover, .text-link button:hover { border-color: var(--brass); color: var(--brass-bright); }
+    .journal-entry { display: grid; grid-template-columns: 110px 1fr; gap: 20px; padding: 21px 0; border-top: 1px solid var(--line); }
+    .journal-entry time { color: var(--brass); font-size: 9px; letter-spacing: .15em; text-transform: uppercase; }
+    .journal-entry strong { font: 500 23px var(--serif); }
+    .journal-entry p { margin: 6px 0 0; color: #aaa498; font-size: 13px; line-height: 1.6; }
+    .topic-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; padding: 0; list-style: none; }
+    .topic-list li { padding: 14px 16px; border: 1px solid var(--line); color: #ded7c9; font: 17px var(--serif); }
+    .paper-calendar { position: relative; max-width: 670px; margin-top: 38px; padding: 34px 40px 44px; color: #30271a; background: #d4c39f; box-shadow: 10px 12px 0 rgba(0,0,0,.25), 18px 20px 0 rgba(185,154,97,.23); transform: rotate(-.5deg); }
+    .paper-calendar::before { content: ""; position: absolute; inset: 8px; border: 1px solid rgba(58,43,23,.27); pointer-events: none; }
+    .paper-calendar::after { content: ""; position: absolute; width: 13px; height: 13px; top: 15px; left: 50%; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ebd29b, #74552a 68%, #372719); box-shadow: 0 2px 3px #51432e; }
+    .paper-calendar small { color: #685638; font-size: 8px; letter-spacing: .22em; text-transform: uppercase; }
+    .paper-calendar h3 { margin: 15px 0; color: #392e1c; font: 500 42px var(--serif); }
+    .paper-calendar p { max-width: 450px; margin: 0; color: #685a40; font: 16px/1.55 var(--serif); }
+    .paper-calendar .paper-date { margin-top: 22px; color: #6a522b; font: 600 11px var(--sans); letter-spacing: .18em; }
+    .mission-links { margin-top: 34px; }
+    .back-home { margin-top: 40px; border: 0; padding: 0 0 7px; border-bottom: 1px solid var(--brass); background: transparent; color: var(--brass-bright); font-size: 9px; letter-spacing: .2em; text-transform: uppercase; }
+    footer { display: none; }
+    @media (max-width: 900px) {
+      .site-header { height: auto; min-height: 96px; padding: 18px 24px; gap: 26px; flex-wrap: wrap; }
+      .brand { font-size: 45px; }
+      .primary-nav { margin-left: 0; gap: 14px 22px; }
+      .primary-nav button { font-size: 9px; }
+      main { min-height: calc(100vh - 96px); }
+      #view-expedition { height: auto; min-height: calc(100vh - 96px); overflow: visible; }
+      .home-layout { height: auto; min-height: 0; grid-template-columns: 1fr; }
+      .main-column { height: auto; grid-template-rows: minmax(390px, 62vh) 190px; gap: 0; }
+      .hero { height: 100%; min-height: 390px; }
+      .destination-tab { padding: 22px 16px 18px; }
+      .destination-preview { height: clamp(42px, 6vh, 54px); margin-top: 10px; }
+      .map-panel { height: auto; min-height: 650px; padding: 0 14px 20px; border-left: 0; border-top: 1px solid var(--line); }
+      .map-art-wrap { width: min(100%, 420px); margin: 0 auto; }
+      .map-art { max-width: 420px; }
+      .departure { min-height: 230px; }
+      .map-marker-label { font-size: 9px; }
+    }
+    @media (max-width: 600px) {
+      .site-header { gap: 18px; }
+      .primary-nav { width: 100%; margin-left: 0; gap: 8px 16px; }
+      .primary-nav button { font-size: 8px; letter-spacing: .14em; }
+      #view-expedition { height: auto; }
+      .main-column { grid-template-rows: minmax(360px, 58vh) 142px; }
+      .hero { min-height: 360px; }
+      .hero-copy { top: 72px; left: 22px; right: 14px; }
+      .hero h1 { max-width: 100%; font-size: clamp(34px, 8vw, 48px); white-space: normal; }
+      .destination-strip { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+      .destination-tab { padding: 17px 8px 14px; border-radius: 10px 10px 0 0; }
+      .destination-tab strong { font-size: clamp(12px, 3.2vw, 16px); }
+      .destination-preview { height: 38px; margin-top: 8px; }
+      .destination-tab small { font-size: 6px; letter-spacing: .06em; }
+      .departure-label { font-size: 15px; }
+      .departure-rule { margin: 12px 0 20px; }
+      .days-remaining { font-size: 48px; }
+      .route-overview { padding: 17px; }
+      .route-sequence { font-size: 14px; }
+      .itinerary-timeline li { grid-template-columns: 1fr; gap: 6px; }
+      .dossier-grid, .topic-list { grid-template-columns: 1fr; }
+      .view { padding: 36px 22px; }
+      .journal-entry { grid-template-columns: 1fr; gap: 7px; }
+      .paper-calendar { padding: 32px 25px 38px; }
+      .paper-calendar h3 { font-size: 34px; }
+      .departure { grid-template-columns: 1fr; }
+      .days-remaining { text-align: left; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="#expedition" data-view="expedition" aria-label="GBSE home">GBSE<small>FIELD JOURNAL · 2028</small></a>
+    <nav class="primary-nav" aria-label="Primary navigation">
+      <button type="button" data-view="expedition" aria-current="page">The Expedition</button>
+      <button type="button" data-view="destinations">Destinations</button>
+      <button type="button" data-view="journal">Journal</button>
+      <button type="button" data-view="preparation">Preparation</button>
+      <button type="button" data-view="about">About</button>
+    </nav>
+    <div class="header-note">A journey in the making<br>Great Britain · 2028</div>
+  </header>
+
+  <main id="main-content">
+    <section class="view is-active" id="view-expedition" aria-label="The Expedition homepage">
+      <div class="home-layout">
+        <div class="main-column">
+          <section class="hero" aria-labelledby="hero-title">
+            <img class="hero-photo" src="GBSE-Prototype-assets/glen-coe-hero.png" alt="Glen Coe beneath a dramatic clouded sky at golden hour">
+            <div class="hero-copy">
+              <h1 id="hero-title">Great Britain Solo Expedition</h1>
+            </div>
+          </section>
+          <div class="destination-strip" aria-label="Expedition destinations">
+            <button class="destination-tab" type="button" data-destination="London"><strong>London</strong><span class="destination-preview"><img src="GBSE-Prototype-assets/Tower_Bridge_at_Dawn.jpg" alt="" aria-hidden="true"></span><small>Explore →</small></button>
+            <button class="destination-tab" type="button" data-destination="Edinburgh"><strong>Edinburgh</strong><span class="destination-preview"><img src="GBSE-Prototype-assets/edinburgh-destination.jpg" alt="" aria-hidden="true"></span><small>Explore →</small></button>
+            <button class="destination-tab" type="button" data-destination="Glen Coe"><strong>Glen Coe</strong><span class="destination-preview"><img src="GBSE-Prototype-assets/glen-coe-destination.jpg" alt="" aria-hidden="true"></span><small>Explore →</small></button>
+            <button class="destination-tab" type="button" data-destination="Skye"><strong>Skye</strong><span class="destination-preview"><img src="GBSE-Prototype-assets/skye-destination.jpg" alt="" aria-hidden="true"></span><small>Explore →</small></button>
+            <button class="destination-tab" type="button" data-destination="Inverness"><strong>Inverness</strong><span class="destination-preview"><img src="GBSE-Prototype-assets/inverness-destination.jpg" alt="" aria-hidden="true"></span><small>Explore →</small></button>
+            <button class="destination-tab" type="button" data-destination="Orkney"><strong>Orkney</strong><span class="destination-preview"><img src="GBSE-Prototype-assets/orkney-destination.jpg" alt="" aria-hidden="true"></span><small>Explore →</small></button>
+          </div>
+        </div>
+        <aside class="map-panel" aria-label="Expedition map and departure information">
+          <div class="map-art-wrap">
+            <img class="map-art" src="GBSE-Prototype-assets/great-britain-map.png" alt="Topographic map artwork showing Great Britain and surrounding islands">
+            <div class="map-markers" aria-label="Open a destination dossier">
+              <button class="map-marker" type="button" data-destination="Orkney" style="--x:56%;--y:12%" aria-label="Open Orkney dossier"><span class="map-marker-dot"></span><span class="map-marker-label">Orkney</span></button>
+              <button class="map-marker" type="button" data-destination="Skye" style="--x:36%;--y:27%" aria-label="Open Skye dossier"><span class="map-marker-dot"></span><span class="map-marker-label">Skye</span></button>
+              <button class="map-marker" type="button" data-destination="Glen Coe" style="--x:48%;--y:36%" aria-label="Open Glen Coe dossier"><span class="map-marker-dot"></span><span class="map-marker-label">Glen Coe</span></button>
+              <button class="map-marker" type="button" data-destination="Edinburgh" style="--x:62%;--y:44%" aria-label="Open Edinburgh dossier"><span class="map-marker-dot"></span><span class="map-marker-label">Edinburgh</span></button>
+              <button class="map-marker" type="button" data-destination="Inverness" style="--x:61%;--y:28%" aria-label="Open Inverness dossier"><span class="map-marker-dot"></span><span class="map-marker-label">Inverness</span></button>
+              <button class="map-marker" type="button" data-destination="London" style="--x:64%;--y:78%" aria-label="Open London dossier"><span class="map-marker-dot"></span><span class="map-marker-label">London</span></button>
+            </div>
+          </div>
+          <div class="departure">
+            <div class="departure-label">Expedition Departure</div>
+            <div class="departure-rule" aria-hidden="true"></div>
+            <div class="days-remaining"><span id="days-count">684</span><small>Days</small></div>
+            <div class="departure-date">19 May 2028</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="view" id="view-destinations" aria-labelledby="destinations-title">
+      <div class="view-inner">
+        <div class="view-kicker">Six chapters · one journey</div>
+        <h2 id="destinations-title">Destination dossiers</h2>
+        <p class="view-lede">The current itinerary traces the expedition from London north through Scotland, then returns south. Select a map marker or destination to see the public schedule recorded in the planning workbook.</p>
+        <div class="route-overview"><span class="route-overview-label">Current itinerary · 19 May–18 June 2028</span><strong>Six destination chapters across Great Britain</strong><div class="route-sequence"><span>London</span> → <span>Edinburgh</span> → <span>Glen Coe</span> → <span>Skye</span> → <span>Inverness</span> → <span>Orkney</span> → <span>London</span></div></div>
+        <div class="destination-picker" aria-label="Choose a destination">
+          <button type="button" data-destination="London">London</button><button type="button" data-destination="Edinburgh">Edinburgh</button><button type="button" data-destination="Glen Coe">Glen Coe</button><button type="button" data-destination="Skye">Skye</button><button type="button" data-destination="Inverness">Inverness</button><button type="button" data-destination="Orkney">Orkney</button>
+        </div>
+        <div class="section-rule"></div>
+        <div id="destination-detail"><div class="view-kicker">Choose a chapter</div><p class="view-lede">Select a destination above, or choose a marker on the expedition map, to view its itinerary.</p></div>
+        <button class="back-home" type="button" data-view="expedition">← Return to the expedition</button>
+      </div>
+    </section>
+
+    <section class="view" id="view-journal" aria-labelledby="journal-title">
+      <div class="view-inner">
+        <div class="view-kicker">Field notes · observations · discoveries</div>
+        <h2 id="journal-title">The journal</h2>
+        <p class="view-lede">A field log for the preparations, unexpected moments, and photographs that will make the expedition its own story.</p>
+        <div class="section-rule"></div>
+        <div class="journal-entry"><time>Before departure</time><div><strong>The first page is still blank.</strong><p>Journal entries and photographs have not been provided. This space is reserved for field notes rather than a generic blog feed.</p></div></div>
+        <button class="back-home" type="button" data-view="expedition">← Return to the expedition</button>
+      </div>
+    </section>
+
+    <section class="view" id="view-preparation" aria-labelledby="preparation-title">
+      <div class="view-inner">
+        <div class="view-kicker">The planning room</div>
+        <h2 id="preparation-title">Preparation</h2>
+        <p class="view-lede">Practical planning belongs behind the public-facing expedition experience. These are the planning topics identified in the design brief; no checklist statuses or booking details were supplied.</p>
+        <div class="section-rule"></div>
+        <ul class="topic-list"><li>Packing &amp; clothing</li><li>Camera equipment</li><li>CPAP &amp; travel equipment</li><li>Transportation</li><li>Accommodation</li><li>Travel insurance</li><li>Money &amp; documents</li><li>Food</li><li>Walking preparation</li><li>Booking timeline</li></ul>
+        <div class="mission-links"><button class="back-home" type="button" data-view="mission">Enter Mission Control →</button></div>
+        <button class="back-home" type="button" data-view="expedition">← Return to the expedition</button>
+      </div>
+    </section>
+
+    <section class="view" id="view-mission" aria-labelledby="mission-title">
+      <div class="view-inner">
+        <div class="view-kicker">Mission Control · planning room</div>
+        <h2 id="mission-title">The days ahead</h2>
+        <p class="view-lede">The expedition calendar belongs here, away from the homepage. This public prototype uses confirmed destination-level itinerary notes only. Booking, accommodation, contact, financial, and personal planning details are intentionally not included.</p>
+        <div class="paper-calendar"><small>Great Britain Solo Expedition · Planning calendar</small><h3>Mission Control</h3><p>Layered paper, brass fasteners, and a quiet working surface evoke the tear-off calendar described in the design specification. Calendar pages and planning data are placeholders.</p><div class="paper-date">DEPARTURE · 19 MAY 2028</div></div>
+        <div class="section-rule"></div>
+        <ul class="topic-list"><li>Expedition calendar</li><li>Expedition fund</li><li>Walking challenge</li><li>Booking progress</li><li>Accommodation status</li><li>Transport planning</li><li>Preparation checklist</li><li>Packing status</li><li>Important dates</li></ul>
+        <button class="back-home" type="button" data-view="preparation">← Back to preparation</button>
+      </div>
+    </section>
+
+    <section class="view" id="view-about" aria-labelledby="about-title">
+      <div class="view-inner">
+        <div class="view-kicker">An expedition is being planned</div>
+        <h2 id="about-title">About GBSE</h2>
+        <p class="view-lede">The Great Britain Solo Expedition is a journey being planned and documented across six chapters: London, Edinburgh, Glen Coe, Skye, Inverness, and Orkney.</p>
+        <div class="section-rule"></div>
+        <p class="view-lede">Its north star is simple: “An expedition is being planned. Come inside and explore it.” The site is a living expedition manual—an invitation to discover the preparation, the places, and eventually the journey itself.</p>
+        <button class="back-home" type="button" data-view="expedition">← Return to the expedition</button>
+      </div>
+    </section>
+  </main>
+  <footer>GBSE · Great Britain Solo Expedition <span aria-hidden="true"> · </span> A journey in the making</footer>
+
+  <script>
+    (() => {
+      const views = [...document.querySelectorAll('.view')];
+      const navButtons = [...document.querySelectorAll('.primary-nav [data-view]')];
+      const showView = (name) => {
+        const selected = document.getElementById(`view-${name}`);
+        if (!selected) return;
+        views.forEach(view => view.classList.toggle('is-active', view === selected));
+        navButtons.forEach(button => {
+          if (button.dataset.view === name) button.setAttribute('aria-current', 'page');
+          else button.removeAttribute('aria-current');
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      document.querySelectorAll('[data-view]').forEach(control => {
+        control.addEventListener('click', event => {
+          event.preventDefault();
+          showView(control.dataset.view);
+        });
+      });
+      const safeText = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      const itinerary = {
+        'London': {
+          window: '19–27 May & 14–18 June 2028',
+          image: 'GBSE-Prototype-assets/Tower_Bridge_at_Dawn.jpg', imageAlt: 'Tower Bridge illuminated before dawn over the River Thames in London', photoWidth: '65%', photoTitle: 'Tower Bridge at Dawn', photographer: 'George Johnson (Fuzzypiggy)', source: 'https://commons.wikimedia.org/wiki/File:Tower_Bridge_at_Dawn.jpg', license: 'CC BY-SA 3.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+          summary: 'The journey begins and ends in London. The workbook assigns an Oxford day trip and lists London sights, but leaves most activity dates unallocated.',
+          events: [
+            ['19 May', 'Arrival in London', 'Arrival day is intentionally light.'],
+            ['20–24 May', 'London days', 'Activities are planned, but exact day assignments are not recorded.'],
+            ['25 May', 'Oxford day trip', 'Oxford is assigned to this date in the calendar.'],
+            ['26 May', 'London', 'A London day before the northbound transfer.'],
+            ['27 May', 'Travel to Edinburgh', 'Transfer and arrival day.'],
+            ['14 June', 'Return to London', 'Travel back from Orkney.'],
+            ['15 June', 'London day', 'The planned activity is not confirmed: the calendar assigns a Seven Sisters outing, while the extra-days sheet leaves this day unallocated.'],
+            ['16–17 June', 'Final London days', 'Two full days are protected; specific activities are not assigned.'],
+            ['18 June', 'Journey home', 'Return travel from London.']
+          ],
+          activities: ['British Museum', 'Natural History Museum', 'Westminster Abbey interior (high priority)', 'Temple Church', 'Tower of London', 'Tower Bridge Exhibition', 'British Library Treasures Gallery', 'London Wall / Roman London', 'Big Ben exterior', 'Buckingham Palace exterior', 'Royal Observatory Greenwich', 'Thames Clippers to Greenwich', 'Borough Market', 'Historic pub evening (venue not specified)', 'London Mithraeum (arrival-day or early option)', 'Cleopatra’s Needle', 'Independent bookshop', 'South Bank walk'],
+          note: 'London Eye is explicitly marked removed in the workbook and is not included. The workbook also mentions meeting friends; that personal plan is omitted from this public-facing prototype.'
+        },
+        'Edinburgh': {
+          window: '27 May–1 June 2028',
+          image: 'GBSE-Prototype-assets/edinburgh-destination.jpg', imageAlt: 'Edinburgh Castle viewed from the Grassmarket', photoWidth: '94%', photoTitle: 'Edinburgh Castle', photographer: 'Klaus Hermsen', source: 'https://commons.wikimedia.org/wiki/File:EdinburghCastle.jpg', license: 'CC BY-SA 3.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+          summary: 'Edinburgh is the first Scottish base. The workbook fixes the Outlander day trip and Rosslyn Chapel day, while leaving some city activity allocation open.',
+          events: [
+            ['27 May', 'Travel to Edinburgh', 'Arrival and transfer from London.'],
+            ['28 May', 'Edinburgh day', 'City activities are not assigned to this date.'],
+            ['29 May', 'Outlander day trip', 'Assigned in the calendar.'],
+            ['30 May', 'Rosslyn Chapel / Edinburgh', 'Rosslyn Chapel is on this date; the exact allocation around Edinburgh activities remains open.'],
+            ['31 May', 'Edinburgh day', 'City activities are not assigned to this date.'],
+            ['1 June', 'Travel to Glen Coe', 'Transfer with a flexible arrival.']
+          ],
+          activities: ['Edinburgh Castle', 'Royal Mile', 'Arthur’s Seat / Salisbury Crags', 'National Museum of Scotland', 'Calton Hill', 'Dean Village', 'Greyfriars', 'Rosslyn Chapel', 'MUMS / Mash Bar'],
+          note: 'The workbook lists these Edinburgh activities as planned, but does not assign most of them to a specific day.'
+        },
+        'Glen Coe': {
+          window: '1–5 June 2028',
+          image: 'GBSE-Prototype-assets/glen-coe-destination.jpg', imageAlt: 'The Three Sisters of Glencoe rise over a green mountain valley', photoWidth: '78%', photoTitle: 'The Three Sisters of Glencoe', photographer: 'Euan Nelson', source: 'https://commons.wikimedia.org/wiki/File:The_Three_Sisters_of_Glencoe_-_geograph.org.uk_-_4673948.jpg', license: 'CC BY-SA 2.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/2.0/',
+          summary: 'The Glen Coe stay includes two core exploration days, a locked e-bike excursion, and a transfer onward to Skye.',
+          events: [
+            ['1 June', 'Arrive in Glen Coe', 'Travel from Edinburgh; arrival is flexible.'],
+            ['2–3 June', 'Glen Coe exploration', 'Core walking, exploration, and photography days.'],
+            ['4 June', 'Port Appin e-bike excursion', 'A locked day excursion via Loch Linnhe and Castle Stalker, with Port Appin and a seafood lunch.'],
+            ['5 June', 'Travel to Portree', 'Transfer to Skye, followed by Portree / Scorrybreac exploration.']
+          ],
+          activities: ['Old Military Road', 'Signal Rock', 'Three Sisters', 'Little White House'],
+          note: 'The listed Glen Coe locations are planned, but the workbook does not assign them to specific dates.'
+        },
+        'Skye': {
+          window: '5–9 June 2028',
+          image: 'GBSE-Prototype-assets/skye-destination.jpg', imageAlt: 'The Quiraing mountain landscape on the Isle of Skye', photoWidth: '100%', photoTitle: 'Quiraing, Isle of Skye, Scotland', photographer: 'Squirrel1113', source: 'https://commons.wikimedia.org/wiki/File:Quiraing,_Isle_of_Skye,_Scotland.jpg', license: 'CC BY 4.0', licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+          summary: 'Skye has two dated landmark days, a protected weather-flex day, and a travel day to Inverness.',
+          events: [
+            ['5 June', 'Arrive in Portree', 'Travel from Glen Coe; Portree and Scorrybreac exploration.'],
+            ['6 June', 'Old Man of Storr', 'Assigned in the calendar.'],
+            ['7 June', 'Quiraing / An Corran', 'Assigned in the calendar.'],
+            ['8 June', 'Flex, weather, and discovery day', 'Protected as a flexible day.'],
+            ['9 June', 'Travel to Inverness', 'A shorter travel leg and overnight stop.']
+          ],
+          activities: ['Scorrybreac / Portree', 'Old Man of Storr', 'Quiraing', 'An Corran', 'Eilean Donan Castle (planned early-morning visit)'],
+          note: 'The workbook identifies Eilean Donan Castle as planned early-morning, but does not give it a confirmed date.'
+        },
+        'Inverness': {
+          window: '9–11 June 2028',
+          image: 'GBSE-Prototype-assets/inverness-destination.jpg', imageAlt: 'The thatched Leanach Cottage on Culloden battlefield', photoWidth: '94%', photoTitle: 'Culloden battlefield', photographer: 'Mike Peel', source: 'https://commons.wikimedia.org/wiki/File:Battle_of_Culloden_battlefield_2009-11.jpg', license: 'CC BY-SA 4.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+          summary: 'Inverness is a full destination chapter between Skye and Orkney, with a dedicated stay and historically significant places in the activity plan.',
+          events: [
+            ['9 June', 'Arrive in Inverness', 'Travel from Skye; overnight stop.'],
+            ['10 June', 'Full day in Inverness', 'The specific activity is unresolved in the workbook.'],
+            ['11 June', 'Travel to Orkney', 'Continue north to Kirkwall.']
+          ],
+          activities: ['Culloden Moor', 'Clava Cairns', 'Loch Ness'],
+          note: 'Schedule conflict: the calendar assigns Culloden Moor and Clava Cairns to 10 June. The Activities sheet calls Loch Ness the locked extra-day main activity and lists Clava Cairns as a candidate; the Extra Days and Planning Notes sheets also say Inverness full day + Loch Ness. The public schedule therefore leaves the day’s activity unconfirmed.'
+        },
+        'Orkney': {
+          window: '11–14 June 2028',
+          image: 'GBSE-Prototype-assets/orkney-destination.jpg', imageAlt: 'The Ring of Brodgar stone circle beside the Loch of Harray', photoWidth: '94%', photoTitle: 'Ring of Brodgar, Orkney', photographer: 'Stevekeiretsu', source: 'https://commons.wikimedia.org/wiki/File:Ring_of_Brodgar,_Orkney.jpg', license: 'CC BY-SA 3.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+          summary: 'Orkney includes a travel-in day, a dated cluster of major sites, a second full usable day, and the return to London.',
+          events: [
+            ['11 June', 'Travel to Kirkwall', 'Transfer from Inverness.'],
+            ['12 June', 'Neolithic Orkney', 'Skara Brae, Maeshowe, Ring of Brodgar, and Standing Stones of Stenness.'],
+            ['13 June', 'Second full Orkney day', 'A full usable day is reserved; activities are not specified.'],
+            ['14 June', 'Return to London', 'Travel south from Orkney.']
+          ],
+          activities: ['Skara Brae', 'Maeshowe', 'Ring of Brodgar', 'Standing Stones of Stenness'],
+          note: 'The workbook protects the second full day but does not specify its activity plan.'
+        }
+      };
+      const linkedDestinationControls = [...document.querySelectorAll('.destination-tab[data-destination], .map-marker[data-destination]')];
+      const syncDestinationHover = (place, active) => {
+        linkedDestinationControls
+          .filter(control => control.dataset.destination === place)
+          .forEach(control => control.classList.toggle('is-hovered', active));
+      };
+      linkedDestinationControls.forEach(control => {
+        const place = control.dataset.destination;
+        control.addEventListener('pointerenter', () => syncDestinationHover(place, true));
+        control.addEventListener('pointerleave', () => syncDestinationHover(place, false));
+        control.addEventListener('focus', () => syncDestinationHover(place, true));
+        control.addEventListener('blur', () => syncDestinationHover(place, false));
+      });
+
+      document.querySelectorAll('[data-destination]').forEach(control => {
+        control.addEventListener('click', () => {
+          const place = control.dataset.destination;
+          const detail = document.getElementById('destination-detail');
+          const record = itinerary[place];
+          if (!record) return;
+          const markerButtons = [...document.querySelectorAll('.map-marker')];
+          markerButtons.forEach(button => button.classList.toggle('is-selected', button.dataset.destination === place));
+          detail.innerHTML = `<div class="view-kicker">Expedition itinerary · ${safeText(place)}</div><h2>${safeText(place)}</h2><figure class="destination-image"><div class="destination-photo" style="--destination-photo: url('${safeText(record.image)}'); --photo-width: ${safeText(record.photoWidth)}"><img src="${safeText(record.image)}" alt="${safeText(record.imageAlt)}" loading="lazy"></div><figcaption>${safeText(record.photoTitle)} · Photograph by ${safeText(record.photographer)} via <a href="${safeText(record.source)}" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a> · <a href="${safeText(record.licenseUrl)}" target="_blank" rel="noopener noreferrer">${safeText(record.license)}</a></figcaption></figure><p class="itinerary-window">${safeText(record.window)}</p><p class="itinerary-summary">${safeText(record.summary)}</p><h3 class="itinerary-heading">Schedule</h3><ol class="itinerary-timeline">${record.events.map(([date,title,description]) => `<li><time>${safeText(date)}</time><div><h3>${safeText(title)}</h3><p>${safeText(description)}</p></div></li>`).join('')}</ol><h3 class="itinerary-heading">Planned activities · date not assigned unless shown above</h3><ul class="itinerary-activities">${record.activities.map(activity => `<li>${safeText(activity)}</li>`).join('')}</ul><p class="schedule-note">${safeText(record.note)}</p>`;
+          showView('destinations');
+          detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+      const target = new Date('2028-05-19T00:00:00');
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const remaining = Math.max(0, Math.ceil((target - today) / 86400000));
+      document.getElementById('days-count').textContent = remaining.toLocaleString('en-GB');
+    })();
+  </script>
+</body>
 </html>
