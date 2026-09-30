@@ -167,15 +167,21 @@
       .primary-nav { width: 100%; margin-left: 0; gap: 8px 16px; }
       .primary-nav button { font-size: 8px; letter-spacing: .14em; }
       #view-expedition { height: auto; }
-      .main-column { grid-template-rows: minmax(360px, 58vh) 142px; }
+      .home-layout { display: flex; flex-direction: column; }
+      .main-column { display: contents; }
       .hero { min-height: 360px; }
       .hero-copy { top: 72px; left: 22px; right: 14px; }
       .hero h1 { max-width: 100%; font-size: clamp(34px, 8vw, 48px); white-space: normal; }
-      .destination-strip { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-      .destination-tab { padding: 17px 8px 14px; border-radius: 10px 10px 0 0; }
-      .destination-tab strong { font-size: clamp(12px, 3.2vw, 16px); }
-      .destination-preview { height: 38px; margin-top: 8px; }
-      .destination-tab small { font-size: 6px; letter-spacing: .06em; }
+      .map-panel { order: 1; width: 100%; min-width: 0; min-height: 0; margin-top: 12px; padding: 0 12px 14px; }
+      .map-art-wrap { width: min(100%, 420px); margin: 0 auto; }
+      .map-art { width: 100%; max-width: 420px; }
+      .map-marker-label { font-size: 9px; }
+      .departure { min-height: 190px; margin-top: 0; }
+      .destination-strip { order: 2; width: 100%; height: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px; }
+      .destination-tab { height: 132px; min-height: 132px; padding: 14px 12px 12px; border-right: 1px solid #242424; border-radius: 10px; }
+      .destination-tab strong { max-width: 100%; font-size: clamp(14px, 4vw, 16px); white-space: nowrap; }
+      .destination-preview { height: 42px; margin-top: 8px; }
+      .destination-tab small { font-size: 7px; letter-spacing: .08em; }
       .departure-label { font-size: 15px; }
       .departure-rule { margin: 12px 0 20px; }
       .days-remaining { font-size: 48px; }
